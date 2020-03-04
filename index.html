@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="381327230808-jju2ja9oegl3ilcoks7q46bocjm1lge7.apps.googleusercontent.com">
+    <title>Fancy todo</title>
+</head>
+<body>
+
+    <section id="home">
+        <h1>Welcome to Todo-Apps</h1>
+        <button type="submit" id="login">Login</button>
+        <button type="submit" id="register">Register</button>
+    </section>
+
+    <section id="dashboard">
+        <button type="submit" id="btn-logout">LogOut</button>
+        <a href="#" onclick="signOut();">Sign Out Google</a>
+        <h1>Ini Halaman Dashboard</h1>
+    </section>
+
+    <section id="form-register">
+        <h1>Sign Up</h1>
+        <form>
+            <input type="email" id="email-register" placeholder="email" /> <br/>
+            <input type="password" id="password-register" placeholder="password" /> <br/>
+            <button type="submit" id="btn-register"> Sign Up</button>
+        </form>
+    </section>
+
+    <section id="form-login">
+        <h1>Sign In</h1>
+        <form>
+            <input type="email" id="email-login" placeholder="email" /> <br/>
+            <input type="password" id="password-login" placeholder="password" /> <br/>
+            <button type="submit" id="btn-login"> Sign In</button>
+            <div class="g-signin2" data-onsuccess="onSignIn" id="btn-google-sign-in"></div>
+        </form>
+    </section>
+
+    
+    <script>
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+        });
+    }
+    </script>
+
+    <script>
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile();
+            var id_token = googleUser.getAuthResponse().id_token;
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+            console.log('Id Token: ' + id_token);
+        }
+    </script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
