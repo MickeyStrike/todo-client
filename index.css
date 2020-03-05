@@ -1,0 +1,49 @@
+.navbar-default{
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+#login, #register, #btn-logout {
+    color: #fff;
+    font-family: 'Fredoka One', cursive;
+}
+
+#login:hover, #register:hover {
+    cursor: pointer;
+    color: rgb(231, 183, 24);
+}
+
+.bg {
+    background: url("image/high-angle-view-of-cityscape-against-cloudy-sky-313782.jpg");
+    background-size: cover;
+    height: 750px;
+}
+
+.bg-2 {
+    background: rgba(10, 10, 10, 0.5);
+    background-size: cover;
+    height: 750px;
+}
+
+#h1-home {
+    color: white;
+    font-family: 'Fredoka One', cursive;
+}
+
+.padding {
+    padding-top: 20%;
+}
+
+.font-custom-fredoka {
+    font-family: 'Fredoka One', cursive;
+}
+
+.font-custom-roboto {
+    font-family: 'Libre Baskerville', serif;
+}
+
+.form-login-custom {
+    background-color: rgba(20, 20, 20, 0.589);
+    border-radius:10%;
+    border-color: none;
+}
