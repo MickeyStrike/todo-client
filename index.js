@@ -1,5 +1,6 @@
 let token = localStorage.getItem('token')
 var UserId = localStorage.getItem('id')
+var email = localStorage.getItem('email')
 // Google Sign In
 function onSignIn(googleUser) {
     let profile = googleUser.getBasicProfile();
@@ -19,6 +20,10 @@ function onSignIn(googleUser) {
         $('#dashboard').show()
         localStorage.setItem('id',res.id)
         localStorage.setItem('token',res.token)
+        localStorage.setItem('email',profile.getEmail())
+        UserId = localStorage.getItem('id')
+        generateUserTodo(UserId)
+        generateFormTodoUpdateDelete(UserId)
     })
     .fail((err) => {
         console.log(err)
@@ -139,12 +144,43 @@ function generateFormTodoUpdateDelete(UserId) {
     
 }
 
+function modalContact(email) {
+
+    $('.card-profile').append(`
+    <img src="https://api.kwelo.com/v1/media/identicon/${email}" alt="Identicon for ${email}">
+    <h3 style="color: black;font-family: 'Fredoka One', cursive;">Irfan Maulana</h3>
+    <p class="title-profile">Student in Hacktiv8</p>
+    <p>2020</p>
+    <p><button class="btn-profile" data-target="#contactModal" data-toggle="modal">Contact</button></p>`)
+
+
+    $('#contact').append(`<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Contact</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control input-updateId" value="${email}" readonly>
+            </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>`)
+}
+
 // Document Ready
 $(document).ready(() => {
     if(token) {
         $('#dashboard').show()
         generateUserTodo(UserId)
         generateFormTodoUpdateDelete(UserId)
+        modalContact(email)
         $('#home').hide()
         $('#form-register').hide()
         $('#form-login').hide()
@@ -189,9 +225,11 @@ $(document).ready(() => {
             $('#dashboard').show()
             localStorage.setItem('id',res.id)
             UserId = localStorage.getItem('id')
+            localStorage.setItem('token',res.token)
+            localStorage.setItem('email',email)
             generateUserTodo(UserId)
             generateFormTodoUpdateDelete(UserId)
-            localStorage.setItem('token',res.token)
+            modalContact(email)
         })
         .fail((err) => {
             console.log(err)
@@ -211,14 +249,15 @@ $(document).ready(() => {
             }
         })
         .done((res) => {
-            console.log(res)
             localStorage.setItem('token',res.token)
             localStorage.setItem('id',res.id)
+            localStorage.setItem('email',email)
             UserId = localStorage.getItem('id')
             $('#form-register').hide()
             $('#dashboard').show()
             generateUserTodo(UserId)
             generateFormTodoUpdateDelete(UserId)
+            modalContact(email)
         })
         .fail((err) => {
             console.log(err)
@@ -258,8 +297,8 @@ $(document).ready(() => {
             }
         })
         .done((res) => {
-            $('.col-card-todos').empty()
             UserId = localStorage.getItem('id')
+            $('.col-card-todos').empty()
             generateUserTodo(UserId)
             generateFormTodoUpdateDelete(UserId)
             console.log('data success created')
@@ -291,7 +330,7 @@ $(document).ready(() => {
                                 <div class="card-body">
                                     <div class="media">
                                         <span class="card-img-100 d-inline-flex justify-content-center align-items-center rounded-circle grey lighten-3 mr-4">
-                                            <i class="fab fa-react fa-2x text-info"></i>
+                                            <img src="https://api.kwelo.com/v1/media/identicon/${res.result[i].User.email}" alt="Identicon for ${res.result[i].User.email}">
                                         </span>
                                         <div class="media-body">
                                             <h5 class="dark-grey-text mb-3">${res.result[i].User.email}</h5>
@@ -312,11 +351,11 @@ $(document).ready(() => {
                                     <div class="card-body">
                                         <div class="media">
                                             <span class="card-img-100 d-inline-flex justify-content-center align-items-center rounded-circle grey lighten-3 mr-4">
-                                                <i class="far fa-user fa-2x purple-text"></i>
+                                                <img src="https://api.kwelo.com/v1/media/identicon/${res.result[i].User.email}" alt="Identicon for ${res.result[i].User.email}">
                                             </span>
                                             <div class="media-body">
-                                                <h5 class="dark-grey-text mb-3">irfanmaulana281299</h5>
-                                                <p class="font-weight text-muted mb-0">${res.result[i].tittle}</p>
+                                                <h5 class="dark-grey-text mb-3">${res.result[i].User.email}</h5>
+                                                <p class="font-weight text-muted mb-0">${res.result[i].title}</p>
                                                 <p class="font-weight-light text-muted mb-0">${res.result[i].description}</p>
                                             </div>
                                         </div>
