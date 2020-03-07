@@ -188,7 +188,9 @@ $(document).ready(() => {
             $('#home').hide()
             $('#dashboard').show()
             localStorage.setItem('id',res.id)
+            UserId = localStorage.getItem('id')
             generateUserTodo(UserId)
+            generateFormTodoUpdateDelete(UserId)
             localStorage.setItem('token',res.token)
         })
         .fail((err) => {
@@ -216,6 +218,7 @@ $(document).ready(() => {
             $('#form-register').hide()
             $('#dashboard').show()
             generateUserTodo(UserId)
+            generateFormTodoUpdateDelete(UserId)
         })
         .fail((err) => {
             console.log(err)
@@ -256,6 +259,7 @@ $(document).ready(() => {
         })
         .done((res) => {
             $('.col-card-todos').empty()
+            UserId = localStorage.getItem('id')
             generateUserTodo(UserId)
             generateFormTodoUpdateDelete(UserId)
             console.log('data success created')
@@ -263,26 +267,6 @@ $(document).ready(() => {
         .fail((err) => {
             console.log(err)
         })
-    })
-
-    $('.btn-update').on("click",() => {
-        console.log('wow')
-        let updateId = $(this).attr('id')
-        console.log(updateId)
-        let id = $('.input-updateId').val()
-        let title = $('.input-updateTitle').val()
-        let description = $('.updateDescription').val()
-        console.log(id)
-        console.log(title)
-        console.log(description)
-    })
-
-    // $('.btn-delete').on("click",() => {
-    //     console.log('wow')
-    // })
-
-    $('.update-delete').on("click",() => {
-        console.log('wow')
     })
 
     $('.btn-home').click(function(e) {
