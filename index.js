@@ -1,5 +1,5 @@
 let token = localStorage.getItem('token')
-let UserId = localStorage.getItem('id')
+var UserId = localStorage.getItem('id')
 // Google Sign In
 function onSignIn(googleUser) {
     let profile = googleUser.getBasicProfile();
@@ -26,29 +26,123 @@ function onSignIn(googleUser) {
 
     
 }
+
+function generateUserTodo(UserId) {
+    $.ajax({
+        method:'GET',
+        url:`http://localhost:3000/todos/${UserId}`
+    })
+    .done((res) => {
+        for (let i = 0; i < res.result.length; i++) {
+            $('.col-card-todos').append(`
+                <div class="card card-todos">
+                    <p style="text-align: right;"> <i class="fas fa-edit update-delete" data-toggle="modal" data-target="#updateModal${res.result[i].id}" style="cursor: pointer;" id="${res.result[i].id}"></i> </p>
+                    <p style="color: black;">${res.result[i].title}</p>
+                    <p style="color: black;">${res.result[i].description}</p>
+                    <p style="color: black;">${res.result[i].due_date}</p>
+                </div><br>
+            `)
+        }
+    })
+    .fail((err) => {
+        console.log('failed show todo user list')
+    })
+}
+
+function update(id) {
+    let title = $(`#input-updateTitle-${id}`).val()
+    let description = $(`#input-updateDescription-${id}`).val()
+    let due_date = $(`#input-updateDate-${id}`).val()
+    console.log(title)
+    console.log(description)
+    console.log(due_date)
+    $.ajax({
+        method:'PUT',
+        url:`http://localhost:3000/todos/${id}`,
+        data:{
+            title,
+            description,
+            due_date
+        }
+    })
+    .done((res) => {
+        $('.col-card-todos').empty()
+        generateUserTodo(UserId)
+        console.log('success update')
+    })
+    .fail((err) => {
+        console.log('failed update')
+    })
+}
+
+function deleteTodo(id) {
+    $.ajax({
+        method:'DELETE',
+        url:`http://localhost:3000/todos/${id}`
+    })
+    .done((res) => {
+        console.log('success delete')
+        $('.col-card-todos').empty()
+        generateUserTodo(UserId)
+    })
+    .fail((err) => {
+        console.log('failed delete')
+    })
+}
+
+function generateFormTodoUpdateDelete(UserId) {
+    $.ajax({
+        method:'GET',
+        url:`http://localhost:3000/todos/${UserId}`
+    })
+    .done((res) => {
+        for (let i = 0; i < res.result.length; i++) {
+            let id = res.result[i].id
+            $('#updateModal').append(`
+                <div class="modal fade" id="updateModal${res.result[i].id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Update Todo</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body updateDelete">
+                                <form>
+                                    <label>Id</label>
+                                    <input type="text" class="form-control input-updateId" value="${res.result[i].id}" id="input-updateId-${res.result[i].id}" readonly>
+                                    <label> Title </label><br>
+                                    <input type="text" class="form-control input-updateTitle" value="${res.result[i].title}" id="input-updateTitle-${res.result[i].id}"><br>
+                                    <label> Description </label><br>
+                                    <input type="text" class="form-control input-updateDescription" value="${res.result[i].description}" id="input-updateDescription-${res.result[i].id}"><br>
+                                    <label> Date </label><br>
+                                    <input type="date" class="form-control" id="input-updateDate-${res.result[i].id}">
+                                </form>
+                            </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary btn-update" onclick="update(${id})" id="update${res.result[i].id}" data-dismiss="modal">Update Todo</button>
+                                <button type="button" class="btn btn-primary btn-delete" onclick="deleteTodo(${id})" id="delete${res.result[i].id}" data-dismiss="modal">Delete Todo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `)
+        }
+    })
+    .fail((err) => {
+        console.log('failed show todo user list')
+    })
+    
+}
+
 // Document Ready
 $(document).ready(() => {
     if(token) {
         $('#dashboard').show()
-        $.ajax({
-            method:'GET',
-            url:`http://localhost:3000/todos/${UserId}`
-        })
-        .done((res) => {
-            for (let i = 0; i < res.result.length; i++) {
-                $('.col-card-todos').append(`
-                    <div class="card card-todos">
-                        <p style="text-align: right;"> <i class="fas fa-edit update-delete" data-toggle="modal" data-target="#updateModal" style="cursor: pointer;" id="${res.result[i].id}"></i> </p>
-                        <p style="color: black;">${res.result[i].title}</p>
-                        <p style="color: black;">${res.result[i].description}</p>
-                        <p style="color: black;">${res.result[i].due_date}</p>
-                    </div><br>
-                `)
-            }
-        })
-        .fail((err) => {
-            console.log('failed show todo user list')
-        })
+        generateUserTodo(UserId)
+        generateFormTodoUpdateDelete(UserId)
         $('#home').hide()
         $('#form-register').hide()
         $('#form-login').hide()
@@ -92,6 +186,7 @@ $(document).ready(() => {
             $('#home').hide()
             $('#dashboard').show()
             localStorage.setItem('id',res.id)
+            generateUserTodo(UserId)
             localStorage.setItem('token',res.token)
         })
         .fail((err) => {
@@ -115,6 +210,7 @@ $(document).ready(() => {
             localStorage.setItem('token',res.token)
             $('#form-register').hide()
             $('#dashboard').show()
+            generateUserTodo(UserId)
         })
         .fail((err) => {
             console.log(err)
@@ -130,12 +226,13 @@ $(document).ready(() => {
         auth2.signOut().then(function () {
             console.log('User Sign Out')
         });
+        $('.col-card-todos').empty()
         $('#dashboard').hide()
         $('#page-explore').hide()
         $('#home').show()
     })
 
-    $('.btn-addTodo').on("click",(e) => {
+    $('#btn-addTodo').on("click",(e) => {
         let title = $('#input-addTitle').val()
         let description = $('#input-addDescription').val()
         let due_date = $('#input-addDate').val()
@@ -153,6 +250,9 @@ $(document).ready(() => {
             }
         })
         .done((res) => {
+            $('.col-card-todos').empty()
+            generateUserTodo(UserId)
+            generateFormTodoUpdateDelete(UserId)
             console.log('data success created')
         }) 
         .fail((err) => {
@@ -160,11 +260,24 @@ $(document).ready(() => {
         })
     })
 
-    $('.update-delete').on("click",(e) => {
-        console.log(this.id)
-        let id = this.id
+    $('.btn-update').on("click",() => {
+        console.log('wow')
+        let updateId = $(this).attr('id')
+        console.log(updateId)
+        let id = $('.input-updateId').val()
+        let title = $('.input-updateTitle').val()
+        let description = $('.updateDescription').val()
         console.log(id)
-        $('#updateModal').append(``)
+        console.log(title)
+        console.log(description)
+    })
+
+    // $('.btn-delete').on("click",() => {
+    //     console.log('wow')
+    // })
+
+    $('.update-delete').on("click",() => {
+        console.log('wow')
     })
 
     $('.btn-home').click(function(e) {
@@ -175,44 +288,25 @@ $(document).ready(() => {
     $(".btn-explore").click(function(e){
         $('#dashboard').hide()
         $('#page-explore').show()
+        $(".todoslist").empty()
         $.ajax({
             method:"GET",
             url:"http://localhost:3000/todos"
         })
         .done((res) => {
             for (let i = 0; i < res.result.length; i+=2) {
-                $(".todoslist").append(`
-                    <div class="col-md-6 mb-4">
-                        <div class="card hoverable">
-                            <div class="card-body">
-                                <div class="media">
-                                    <span class="card-img-100 d-inline-flex justify-content-center align-items-center rounded-circle grey lighten-3 mr-4">
-                                        <i class="fab fa-react fa-2x text-info"></i>
-                                    </span>
-                                    <div class="media-body">
-                                        <h5 class="dark-grey-text mb-3">irfanmaulana281299</h5>
-                                        <p class="font-weight text-muted mb-0">${res.result[i].tittle}</p>
-                                        <p class="font-weight-light text-muted mb-0">${res.result[i].description}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`
-                )
-
-                if(res.result[i+1]){
+                if(res.result[i].User){
                     $(".todoslist").append(`
                         <div class="col-md-6 mb-4">
                             <div class="card hoverable">
-                                <!-- Card content -->
                                 <div class="card-body">
                                     <div class="media">
                                         <span class="card-img-100 d-inline-flex justify-content-center align-items-center rounded-circle grey lighten-3 mr-4">
-                                            <i class="far fa-user fa-2x purple-text"></i>
+                                            <i class="fab fa-react fa-2x text-info"></i>
                                         </span>
                                         <div class="media-body">
-                                            <h5 class="dark-grey-text mb-3">irfanmaulana281299</h5>
-                                            <p class="font-weight text-muted mb-0">${res.result[i].tittle}</p>
+                                            <h5 class="dark-grey-text mb-3">${res.result[i].User.email}</h5>
+                                            <p class="font-weight text-muted mb-0">${res.result[i].title}</p>
                                             <p class="font-weight-light text-muted mb-0">${res.result[i].description}</p>
                                         </div>
                                     </div>
@@ -220,6 +314,28 @@ $(document).ready(() => {
                             </div>
                         </div>`
                     )
+    
+                    if(res.result[i+1]){
+                        $(".todoslist").append(`
+                            <div class="col-md-6 mb-4">
+                                <div class="card hoverable">
+                                    <!-- Card content -->
+                                    <div class="card-body">
+                                        <div class="media">
+                                            <span class="card-img-100 d-inline-flex justify-content-center align-items-center rounded-circle grey lighten-3 mr-4">
+                                                <i class="far fa-user fa-2x purple-text"></i>
+                                            </span>
+                                            <div class="media-body">
+                                                <h5 class="dark-grey-text mb-3">irfanmaulana281299</h5>
+                                                <p class="font-weight text-muted mb-0">${res.result[i].tittle}</p>
+                                                <p class="font-weight-light text-muted mb-0">${res.result[i].description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`
+                        )
+                    }
                 }
             }
         })
