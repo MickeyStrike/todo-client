@@ -3,7 +3,7 @@
     z-index: 1;
 }
 
-#login, #register, #btn-logout {
+#login, #register, #btn-logout, #btn-explore, #btn-home {
     color: #fff;
     font-family: 'Fredoka One', cursive;
 }
@@ -34,7 +34,7 @@
     padding-top: 20%;
 }
 
-.font-custom-fredoka {
+.font-custom-fredoka,h4 {
     font-family: 'Fredoka One', cursive;
 }
 
@@ -47,3 +47,83 @@
     border-radius:10%;
     border-color: none;
 }
+
+.my-5{
+    overflow-y: scroll;
+    height: 60vh;
+}
+
+.mt-5 {
+    overflow-y: scroll;
+    height: 30vh;
+}
+
+.navbar {
+    box-shadow: none;
+}
+
+.container-custom {
+    width: 80%;
+    margin-top: 5%;
+}
+
+.card-img-100 {
+    height: 80px;
+    width: 80px;
+}
+
+.profile {
+    height: 30vh;
+}
+
+h4 {
+    color: white;
+}
+
+.card-todos {
+    max-width: 70%;
+    margin: auto;
+    text-align: center;
+}
+
+.btn-delete:hover {
+    background-color: red !important;
+}
+
+/****************************/
+
+.card-profile {
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .title-profile {
+    color: grey;
+    font-size: 18px;
+  }
+  
+  .btn-profile {
+    border: none;
+    outline: 0;
+    display: inline-block;
+    padding: 8px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+  }
+  
+  /* a {
+    text-decoration: none;
+    font-size: 22px;
+    color: black;
+  } */
+  
+  button:hover, a:hover {
+    opacity: 0.7;
+  }
