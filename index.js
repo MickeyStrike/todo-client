@@ -50,15 +50,16 @@ function generateUserTodo(UserId) {
 }
 
 function update(id) {
+    let todoId = $(`#input-updateId-${id}`).val()
     let title = $(`#input-updateTitle-${id}`).val()
     let description = $(`#input-updateDescription-${id}`).val()
     let due_date = $(`#input-updateDate-${id}`).val()
-    console.log(title)
-    console.log(description)
-    console.log(due_date)
     $.ajax({
         method:'PUT',
-        url:`http://localhost:3000/todos/${id}`,
+        url:`http://localhost:3000/todos/${todoId}`,
+        headers:{
+            token
+        },
         data:{
             title,
             description,
@@ -71,6 +72,7 @@ function update(id) {
         console.log('success update')
     })
     .fail((err) => {
+        console.log(err)
         console.log('failed update')
     })
 }
@@ -207,7 +209,10 @@ $(document).ready(() => {
             }
         })
         .done((res) => {
+            console.log(res)
             localStorage.setItem('token',res.token)
+            localStorage.setItem('id',res.id)
+            UserId = localStorage.getItem('id')
             $('#form-register').hide()
             $('#dashboard').show()
             generateUserTodo(UserId)
