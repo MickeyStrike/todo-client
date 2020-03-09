@@ -7,7 +7,7 @@ function onSignIn(googleUser) {
     let id_token = googleUser.getAuthResponse().id_token;
     $.ajax({
         method:"POST",
-        url:"http://localhost:3000/loginGoogle",
+        url:"https://immense-hollows-20504.herokuapp.com/loginGoogle",
         data:{
             email:profile.getEmail(),
             password:"defaultpassword",
@@ -18,6 +18,7 @@ function onSignIn(googleUser) {
         $('#form-login').hide()
         $('#home').hide()
         $('#dashboard').show()
+        $('#form-register').hide()
         localStorage.setItem('id',res.id)
         localStorage.setItem('token',res.token)
         localStorage.setItem('email',profile.getEmail())
@@ -35,7 +36,7 @@ function onSignIn(googleUser) {
 function generateUserTodo(UserId) {
     $.ajax({
         method:'GET',
-        url:`http://localhost:3000/todos/${UserId}`
+        url:`https://immense-hollows-20504.herokuapp.com/todos/${UserId}`
     })
     .done((res) => {
         for (let i = 0; i < res.result.length; i++) {
@@ -61,7 +62,7 @@ function update(id) {
     let due_date = $(`#input-updateDate-${id}`).val()
     $.ajax({
         method:'PUT',
-        url:`http://localhost:3000/todos/${todoId}`,
+        url:`https://immense-hollows-20504.herokuapp.com/todos/${todoId}`,
         headers:{
             token
         },
@@ -85,7 +86,10 @@ function update(id) {
 function deleteTodo(id) {
     $.ajax({
         method:'DELETE',
-        url:`http://localhost:3000/todos/${id}`
+        url:`https://immense-hollows-20504.herokuapp.com/todos/${id}`,
+        headers: {
+            token
+        }
     })
     .done((res) => {
         console.log('success delete')
@@ -93,6 +97,7 @@ function deleteTodo(id) {
         generateUserTodo(UserId)
     })
     .fail((err) => {
+        console.log(err)
         console.log('failed delete')
     })
 }
@@ -100,7 +105,7 @@ function deleteTodo(id) {
 function generateFormTodoUpdateDelete(UserId) {
     $.ajax({
         method:'GET',
-        url:`http://localhost:3000/todos/${UserId}`
+        url:`https://immense-hollows-20504.herokuapp.com/todos/${UserId}`
     })
     .done((res) => {
         for (let i = 0; i < res.result.length; i++) {
@@ -213,7 +218,7 @@ $(document).ready(() => {
         let password = $('#password-login').val()
         $.ajax({
             method:'POST',
-            url:'http://localhost:3000/login',
+            url:'https://immense-hollows-20504.herokuapp.com/login',
             data:{
                 email,
                 password
@@ -242,7 +247,7 @@ $(document).ready(() => {
         let password = $('#password-register').val()
         $.ajax({
             method:'POST',
-            url:'http://localhost:3000/register',
+            url:'https://immense-hollows-20504.herokuapp.com/register',
             data:{
                 email,
                 password
@@ -276,16 +281,18 @@ $(document).ready(() => {
         $('.col-card-todos').empty()
         $('#dashboard').hide()
         $('#page-explore').hide()
+        $('#form-register').hide()
         $('#home').show()
     })
 
     $('#btn-addTodo').on("click",(e) => {
+        e.preventDefault()
         let title = $('#input-addTitle').val()
         let description = $('#input-addDescription').val()
         let due_date = $('#input-addDate').val()
         $.ajax({
             method:'POST',
-            url:'http://localhost:3000/todos',
+            url:'https://immense-hollows-20504.herokuapp.com/todos',
             headers: {
                 token
             },
@@ -309,17 +316,19 @@ $(document).ready(() => {
     })
 
     $('.btn-home').click(function(e) {
+        e.preventDefault()
         $('#dashboard').show()
         $('#page-explore').hide()
     })
 
     $(".btn-explore").click(function(e){
+        e.preventDefault()
         $('#dashboard').hide()
         $('#page-explore').show()
         $(".todoslist").empty()
         $.ajax({
             method:"GET",
-            url:"http://localhost:3000/todos"
+            url:"https://immense-hollows-20504.herokuapp.com/todos"
         })
         .done((res) => {
             for (let i = 0; i < res.result.length; i+=2) {
@@ -351,12 +360,12 @@ $(document).ready(() => {
                                     <div class="card-body">
                                         <div class="media">
                                             <span class="card-img-100 d-inline-flex justify-content-center align-items-center rounded-circle grey lighten-3 mr-4">
-                                                <img src="https://api.kwelo.com/v1/media/identicon/${res.result[i].User.email}" alt="Identicon for ${res.result[i].User.email}">
+                                                <img src="https://api.kwelo.com/v1/media/identicon/${res.result[i+1].User.email}" alt="Identicon for ${res.result[i+1].User.email}">
                                             </span>
                                             <div class="media-body">
-                                                <h5 class="dark-grey-text mb-3">${res.result[i].User.email}</h5>
-                                                <p class="font-weight text-muted mb-0">${res.result[i].title}</p>
-                                                <p class="font-weight-light text-muted mb-0">${res.result[i].description}</p>
+                                                <h5 class="dark-grey-text mb-3">${res.result[i+1].User.email}</h5>
+                                                <p class="font-weight text-muted mb-0">${res.result[i+1].title}</p>
+                                                <p class="font-weight-light text-muted mb-0">${res.result[i+1].description}</p>
                                             </div>
                                         </div>
                                     </div>
