@@ -15,6 +15,7 @@ function onSignIn(googleUser) {
         }
     })
     .done((res) => {
+        $('#alert').hide()
         $('#form-login').hide()
         $('#home').hide()
         $('#dashboard').show()
@@ -27,6 +28,8 @@ function onSignIn(googleUser) {
         generateFormTodoUpdateDelete(UserId)
     })
     .fail((err) => {
+        $('#alert').show()
+        $('#alert').append(err)
         console.log(err)
     })
 
@@ -39,6 +42,7 @@ function generateUserTodo(UserId) {
         url:`https://immense-hollows-20504.herokuapp.com/todos/${UserId}`
     })
     .done((res) => {
+        $('#alert').hide()
         for (let i = 0; i < res.result.length; i++) {
             $('.col-card-todos').append(`
                 <div class="card card-todos">
@@ -51,6 +55,8 @@ function generateUserTodo(UserId) {
         }
     })
     .fail((err) => {
+        $('#alert').show()
+        $('#alert').append(err)
         console.log('failed show todo user list')
     })
 }
@@ -79,6 +85,8 @@ function update(id) {
     })
     .fail((err) => {
         console.log(err)
+        $('#alert').append('failed update, please fill the title,description,date')
+        $('#alert').show()
         console.log('failed update')
     })
 }
@@ -92,6 +100,7 @@ function deleteTodo(id) {
         }
     })
     .done((res) => {
+        $('#alert').hide()
         console.log('success delete')
         $('.col-card-todos').empty()
         generateUserTodo(UserId)
@@ -99,6 +108,8 @@ function deleteTodo(id) {
     .fail((err) => {
         console.log(err)
         console.log('failed delete')
+        $('#alert').append(err)
+        $('#alert').show()
     })
 }
 
@@ -108,6 +119,7 @@ function generateFormTodoUpdateDelete(UserId) {
         url:`https://immense-hollows-20504.herokuapp.com/todos/${UserId}`
     })
     .done((res) => {
+        $('#alert').hide()
         for (let i = 0; i < res.result.length; i++) {
             let id = res.result[i].id
             $('#updateModal').append(`
@@ -144,6 +156,8 @@ function generateFormTodoUpdateDelete(UserId) {
         }
     })
     .fail((err) => {
+        $('#alert').show()
+        $('#alert').append(err)
         console.log('failed show todo user list')
     })
     
@@ -182,6 +196,7 @@ function modalContact(email) {
 // Document Ready
 $(document).ready(() => {
     if(token) {
+        $('#alert').hide()
         $('#dashboard').show()
         generateUserTodo(UserId)
         generateFormTodoUpdateDelete(UserId)
@@ -191,6 +206,7 @@ $(document).ready(() => {
         $('#form-login').hide()
         $('#page-explore').hide()
     }else{
+        $('#alert').hide()
         $('#dashboard').hide()
         $('#home').show()
         $('#form-register').hide()
@@ -225,6 +241,7 @@ $(document).ready(() => {
             }
         })
         .done((res) => {
+            $('#alert').hide()
             $('#form-login').hide()
             $('#home').hide()
             $('#dashboard').show()
@@ -237,6 +254,8 @@ $(document).ready(() => {
             modalContact(email)
         })
         .fail((err) => {
+            $('#alert').append(`${err.responseJSON.message}`)
+            $('#alert').show()
             console.log(err)
         })
     })
@@ -258,6 +277,7 @@ $(document).ready(() => {
             localStorage.setItem('id',res.id)
             localStorage.setItem('email',email)
             UserId = localStorage.getItem('id')
+            $('#alert').hide()
             $('#form-register').hide()
             $('#dashboard').show()
             generateUserTodo(UserId)
@@ -265,6 +285,8 @@ $(document).ready(() => {
             modalContact(email)
         })
         .fail((err) => {
+            $('#alert').show()
+            $('#alert').append(err)
             console.log(err)
         })
     })
@@ -276,6 +298,7 @@ $(document).ready(() => {
         // Google Sign Out
         let auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
+            $('#alert').hide()
             console.log('User Sign Out')
         });
         $('.col-card-todos').empty()
@@ -311,6 +334,8 @@ $(document).ready(() => {
             console.log('data success created')
         }) 
         .fail((err) => {
+            $('#alert').show()
+            $('#alert').append(err)
             console.log(err)
         })
     })
@@ -331,6 +356,7 @@ $(document).ready(() => {
             url:"https://immense-hollows-20504.herokuapp.com/todos"
         })
         .done((res) => {
+            $('#alert').hide()
             for (let i = 0; i < res.result.length; i+=2) {
                 if(res.result[i].User){
                     $(".todoslist").append(`
@@ -377,6 +403,8 @@ $(document).ready(() => {
             }
         })
         .fail((err) => {
+            $('#alert').show()
+            $('#alert').append(err)
             console.log(err)
         })
     }) 
